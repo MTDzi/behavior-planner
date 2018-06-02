@@ -6,9 +6,9 @@
 #include <math.h>
 
 
-//TODO: change weights for cost functions.
-const float REACH_GOAL = 0;
-const float EFFICIENCY = 0;
+//NOTE: you can change weights for cost functions.
+const float REACH_GOAL = 1.3e6;
+const float EFFICIENCY = 1.1e5;
 
 /*
 Here we have provided two possible suggestions for cost functions, but feel free to use your own!
@@ -34,6 +34,7 @@ float goal_distance_cost(const Vehicle & vehicle, const vector<Vehicle> & trajec
     return cost;
 }
 
+
 float inefficiency_cost(const Vehicle & vehicle, const vector<Vehicle> & trajectory, const map<int, vector<Vehicle>> & predictions, map<string, float> & data) {
     /*
     Cost becomes higher for trajectories with intended lane and final lane that have traffic slower than vehicle's target speed.
@@ -56,6 +57,7 @@ float inefficiency_cost(const Vehicle & vehicle, const vector<Vehicle> & traject
     return cost;
 }
 
+
 float lane_speed(const map<int, vector<Vehicle>> & predictions, int lane) {
     /*
     All non ego vehicles in a lane have the same speed, so to get the speed limit for a lane,
@@ -72,6 +74,7 @@ float lane_speed(const map<int, vector<Vehicle>> & predictions, int lane) {
     return -1.0;
 }
 
+
 float calculate_cost(const Vehicle & vehicle, const map<int, vector<Vehicle>> & predictions, const vector<Vehicle> & trajectory) {
     /*
     Sum weighted cost functions to get total cost for trajectory.
@@ -80,7 +83,7 @@ float calculate_cost(const Vehicle & vehicle, const map<int, vector<Vehicle>> & 
     float cost = 0.0;
 
     //Add additional cost functions here.
-    vector< function<float(const Vehicle & , const vector<Vehicle> &, const map<int, vector<Vehicle>> &, map<string, float> &)>> cf_list = {goal_distance_cost, inefficiency_cost};
+    vector< function<float(const Vehicle &, const vector<Vehicle> &, const map<int, vector<Vehicle>> &, map<string, float> &)>> cf_list = {goal_distance_cost, inefficiency_cost};
     vector<float> weight_list = {REACH_GOAL, EFFICIENCY};
 
     for (int i = 0; i < cf_list.size(); i++) {
@@ -91,6 +94,7 @@ float calculate_cost(const Vehicle & vehicle, const map<int, vector<Vehicle>> & 
     return cost;
 
 }
+
 
 map<string, float> get_helper_data(const Vehicle & vehicle, const vector<Vehicle> & trajectory, const map<int, vector<Vehicle>> & predictions) {
     /*

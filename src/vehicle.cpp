@@ -37,21 +37,26 @@ vector<Vehicle> Vehicle::choose_next_state(map<int, vector<Vehicle>> predictions
         item in the trajectory represents the vehicle at the current timestep. The second item in
         the trajectory represents the vehicle one timestep in the future.
     OUTPUT: The the best (lowest cost) trajectory for the ego vehicle corresponding to the next ego vehicle state.
-
-    Functions that will be useful:
-    1. successor_states() - Uses the current state to return a vector of possible successor states for the finite 
-       state machine.
-    2. generate_trajectory(string state, map<int, vector<Vehicle>> predictions) - Returns a vector of Vehicle objects 
-       representing a vehicle trajectory, given a state and predictions. Note that trajectory vectors 
-       might have size 0 if no possible trajectory exists for the state. 
-    3. calculate_cost(Vehicle vehicle, map<int, vector<Vehicle>> predictions, vector<Vehicle> trajectory) - Included from 
-       cost.cpp, computes the cost for a trajectory.
     */
+    vector<string> states = successor_states();
+    float cost;
+    vector<float> costs;
+    vector<string> final_states;
+    vector<vector<Vehicle>> final_trajectories;
 
+    vector<string>::iterator it;
+    for (vector<string>::iterator it = states.begin(); it != states.end(); ++it) {
+        vector<Vehicle> trajectory = generate_trajectory(*it, predictions);
+        if (trajectory.size() != 0) {
+            cost = calculate_cost(*this, predictions, trajectory);
+            costs.push_back(cost);
+            final_trajectories.push_back(trajectory);
+        }
+    }
 
-
-    //TODO: Change return value here:
-    return generate_trajectory("KL", predictions);
+    vector<float>::iterator best_cost = min_element(begin(costs), end(costs));
+    int best_idx = distance(begin(costs), best_cost);
+    return final_trajectories[best_idx];
 }
 
 
@@ -197,6 +202,7 @@ vector<Vehicle> Vehicle::prep_lane_change_trajectory(string state, map<int, vect
     return trajectory;
 }
 
+
 vector<Vehicle> Vehicle::lane_change_trajectory(string state, map<int, vector<Vehicle>> predictions) {
     /*
     Generate a lane change trajectory.
@@ -218,13 +224,16 @@ vector<Vehicle> Vehicle::lane_change_trajectory(string state, map<int, vector<Ve
     return trajectory;
 }
 
+
 void Vehicle::increment(int dt = 1) {
     this->s = position_at(dt);
 }
 
+
 float Vehicle::position_at(int t) {
     return this->s + this->v*t + this->a*t*t/2.0;
 }
+
 
 bool Vehicle::get_vehicle_behind(map<int, vector<Vehicle>> predictions, int lane, Vehicle & rVehicle) {
     /*
@@ -245,6 +254,7 @@ bool Vehicle::get_vehicle_behind(map<int, vector<Vehicle>> predictions, int lane
     return found_vehicle;
 }
 
+
 bool Vehicle::get_vehicle_ahead(map<int, vector<Vehicle>> predictions, int lane, Vehicle & rVehicle) {
     /*
     Returns a true if a vehicle is found ahead of the current vehicle, false otherwise. The passed reference
@@ -264,6 +274,7 @@ bool Vehicle::get_vehicle_ahead(map<int, vector<Vehicle>> predictions, int lane,
     return found_vehicle;
 }
 
+
 vector<Vehicle> Vehicle::generate_predictions(int horizon) {
     /*
     Generates predictions for non-ego vehicles to be used
@@ -279,8 +290,8 @@ vector<Vehicle> Vehicle::generate_predictions(int horizon) {
         predictions.push_back(Vehicle(this->lane, next_s, next_v, 0));
     }
     return predictions;
-
 }
+
 
 void Vehicle::realize_next_state(vector<Vehicle> trajectory) {
     /*
