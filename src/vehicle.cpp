@@ -28,7 +28,6 @@ Vehicle::~Vehicle() {}
 
 vector<Vehicle> Vehicle::choose_next_state(map<int, vector<Vehicle>> predictions) {
     /*
-    
     ***Here you can implement the transition_function code from the Behavior Planning Pseudocode
     classroom concept.***
     
@@ -36,12 +35,11 @@ vector<Vehicle> Vehicle::choose_next_state(map<int, vector<Vehicle>> predictions
         vehicle trajectories as values. A trajectory is a vector of Vehicle objects. The first
         item in the trajectory represents the vehicle at the current timestep. The second item in
         the trajectory represents the vehicle one timestep in the future.
-    OUTPUT: The the best (lowest cost) trajectory for the ego vehicle corresponding to the next ego vehicle state.
+    OUTPUT: The best (lowest cost) trajectory for the ego vehicle corresponding to the next ego vehicle state.
     */
     vector<string> states = successor_states();
     float cost;
     vector<float> costs;
-    vector<string> final_states;
     vector<vector<Vehicle>> final_trajectories;
 
     vector<string>::iterator it;

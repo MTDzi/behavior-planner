@@ -20,12 +20,15 @@ Road::Road(int speed_limit, double traffic_density, vector<int> lane_speeds) {
 
 }
 
+
 Road::~Road() {}
+
 
 Vehicle Road::get_ego() {
 
     return this->vehicles.find(this->ego_key)->second;
 }
+
 
 void Road::populate_traffic() {
 
